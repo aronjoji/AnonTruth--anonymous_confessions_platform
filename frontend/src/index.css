@@ -13,6 +13,10 @@
   --accent-violet: #8b5cf6;
 }
 
+/* Scrollbar hide utility for mobile scroll areas */
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
 body {
   margin: 0;
   padding: 0;

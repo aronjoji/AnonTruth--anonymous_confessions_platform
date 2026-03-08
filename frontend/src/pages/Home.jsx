@@ -160,17 +160,17 @@ const Home = () => {
 
   return (
     <PageTransition>
-      <div className="max-w-[800px] mx-auto px-6 pt-24 pb-20 relative">
+      <div className="max-w-[800px] mx-auto px-3 sm:px-6 pt-20 sm:pt-24 pb-24 lg:pb-20 relative">
         {/* Radial glow behind feed */}
         <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-accent-cyan/[0.03] blur-[100px] rounded-full pointer-events-none" />
         {/* Segmented Feed Control */}
-        <div className="flex items-center mb-8">
+        <div className="mb-6 sm:mb-8 -mx-3 sm:mx-0 px-3 sm:px-0 overflow-x-auto scrollbar-hide">
           <div className="relative inline-flex items-center gap-1 p-1 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
             {filterButtons.map((btn) => (
               <button
                 key={btn.id}
                 onClick={() => setFilter(btn.id)}
-                className={`relative px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-medium whitespace-nowrap transition-colors duration-300 cursor-pointer z-10 ${
+                className={`relative px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium whitespace-nowrap transition-colors duration-300 cursor-pointer z-10 ${
                   filter === btn.id ? 'text-black' : 'text-gray-400 hover:text-white'
                 }`}
               >
@@ -181,8 +181,8 @@ const Home = () => {
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
-                <span className="relative z-10 flex items-center gap-2">
-                  <btn.Icon className="w-4 h-4" /> {btn.label}
+                <span className="relative z-10 flex items-center gap-1.5 sm:gap-2">
+                  <btn.Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {btn.label}
                 </span>
               </button>
             ))}

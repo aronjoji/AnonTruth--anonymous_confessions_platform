@@ -1,13 +1,13 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Home, TrendingUp, MapPin, Compass, PlusSquare, Search, Bell, LogOut, User, Bookmark, Settings, FileText, ChevronDown, X } from 'lucide-react';
+import { Shield, Home, MapPin, Compass, PlusSquare, Search, Bell, LogOut, User, Settings, FileText, X } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { getNotifications, markAllNotificationsRead, SOCKET_URL } from '../services/api';
 import { io } from 'socket.io-client';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import SearchModal from './SearchModal';
 
-/* ─── Center Nav Link ─── */
+/* ─── Desktop Nav Link ─── */
 const NavItem = ({ to, icon: Icon, label, active, onClick }) => (
   <Link
     to={to}
@@ -55,42 +55,34 @@ const Navbar = () => {
   const notifRef = useRef(null);
   const socketRef = useRef(null);
 
-  // Fetch notifications
   const fetchNotifications = useCallback(async () => {
     if (!user) return;
     try {
       const res = await getNotifications({ limit: 15 });
       setNotifications(res.data.notifications);
       setUnreadCount(res.data.unreadCount);
-    } catch (err) {
-      // silently fail
-    }
+    } catch (err) { /* silently fail */ }
   }, [user]);
 
-  // Initial fetch + socket setup
   useEffect(() => {
     fetchNotifications();
-
     if (user) {
       socketRef.current = io(SOCKET_URL, { transports: ['websocket'] });
-      // Join user-specific room for targeted notifications
       socketRef.current.emit('join_user', user._id || user.id);
       socketRef.current.on('new_notification', (data) => {
         setNotifications(prev => [data.notification, ...prev].slice(0, 15));
         setUnreadCount(prev => prev + 1);
       });
-      return () => socketRef.current?.disconnect();
     }
+    return () => socketRef.current?.disconnect();
   }, [user, fetchNotifications]);
 
-  // Scroll handler
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Click outside handlers
   useEffect(() => {
     const onClick = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) setProfileOpen(false);
@@ -100,7 +92,6 @@ const Navbar = () => {
     return () => document.removeEventListener('mousedown', onClick);
   }, []);
 
-  // Close dropdowns on route change
   useEffect(() => {
     setProfileOpen(false);
     setNotifOpen(false);
@@ -136,27 +127,27 @@ const Navbar = () => {
 
   return (
     <>
-      {/* ═══ DESKTOP NAVBAR ═══ */}
+      {/* ═══ TOP NAVBAR ═══ */}
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? 'bg-[rgba(8,10,18,0.82)] backdrop-blur-[16px] shadow-[0_4px_30px_rgba(0,0,0,0.35)] border-b border-white/[0.06]'
-            : 'bg-[rgba(8,10,18,0.4)] backdrop-blur-[8px] border-b border-transparent'
+            ? 'bg-[rgba(8,10,18,0.88)] backdrop-blur-2xl shadow-[0_4px_30px_rgba(0,0,0,0.35)] border-b border-white/[0.06]'
+            : 'bg-[rgba(8,10,18,0.4)] backdrop-blur-lg border-b border-transparent'
         }`}
       >
-        <div className="max-w-[1200px] mx-auto h-[64px] flex items-center justify-between px-5">
+        <div className="max-w-[1200px] mx-auto h-[56px] sm:h-[64px] flex items-center justify-between px-3 sm:px-5">
 
           {/* ── Left: Logo ── */}
           <Link to="/home" className="flex items-center gap-2 shrink-0 group">
-            <div className="relative w-8 h-8 rounded-lg bg-gradient-to-br from-[#4F8CFF] to-[#8B5CF6] flex items-center justify-center shadow-[0_0_14px_rgba(79,140,255,0.25)] group-hover:shadow-[0_0_20px_rgba(79,140,255,0.4)] transition-shadow duration-300">
-              <Shield className="w-4 h-4 text-white" />
+            <div className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-[#4F8CFF] to-[#8B5CF6] flex items-center justify-center shadow-[0_0_14px_rgba(79,140,255,0.25)] group-hover:shadow-[0_0_20px_rgba(79,140,255,0.4)] transition-shadow duration-300">
+              <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
             </div>
-            <span className="text-lg font-bold tracking-tight bg-gradient-to-r from-[#4F8CFF] to-[#8B5CF6] bg-clip-text text-transparent">
+            <span className="text-base sm:text-lg font-bold tracking-tight bg-gradient-to-r from-[#4F8CFF] to-[#8B5CF6] bg-clip-text text-transparent">
               AnonTruth
             </span>
           </Link>
 
-          {/* ── Center: Nav Items ── */}
+          {/* ── Center: Desktop Nav Items ── */}
           <div className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => (
               <NavItem
@@ -170,29 +161,27 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* ── Right: Search + Actions + Profile ── */}
-          <div className="flex items-center gap-2">
+          {/* ── Right: Actions ── */}
+          <div className="flex items-center gap-1 sm:gap-2">
             {/* Search */}
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileTap={{ scale: 0.9 }}
               onClick={() => setSearchOpen(true)}
-              className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/5 text-gray-500 hover:text-white transition-all cursor-pointer"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center hover:bg-white/5 text-gray-500 hover:text-white transition-all cursor-pointer"
             >
-              <Search className="w-[18px] h-[18px]" />
+              <Search className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
             </motion.button>
 
             {/* Notifications */}
             <div className="relative" ref={notifRef}>
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.9 }}
                 onClick={() => { setNotifOpen(!notifOpen); setProfileOpen(false); }}
-                className="relative w-9 h-9 rounded-full hidden sm:flex items-center justify-center hover:bg-white/5 text-gray-500 hover:text-white transition-all cursor-pointer"
+                className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center hover:bg-white/5 text-gray-500 hover:text-white transition-all cursor-pointer"
               >
-                <Bell className="w-[18px] h-[18px]" />
+                <Bell className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
                 {unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 min-w-[16px] h-4 rounded-full bg-[#4F8CFF] text-[9px] font-bold text-white flex items-center justify-center px-1 shadow-[0_0_8px_rgba(79,140,255,0.5)]">
+                  <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 min-w-[14px] sm:min-w-[16px] h-3.5 sm:h-4 rounded-full bg-[#4F8CFF] text-[8px] sm:text-[9px] font-bold text-white flex items-center justify-center px-0.5 shadow-[0_0_8px_rgba(79,140,255,0.5)]">
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </span>
                 )}
@@ -206,15 +195,20 @@ const Navbar = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 6, scale: 0.96 }}
                     transition={{ duration: 0.18 }}
-                    className="absolute right-0 top-full mt-2 w-80 max-h-[420px] rounded-2xl bg-[rgba(12,14,22,0.95)] backdrop-blur-xl border border-white/[0.08] shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col"
+                    className="fixed sm:absolute right-2 sm:right-0 left-2 sm:left-auto top-[60px] sm:top-full sm:mt-2 sm:w-80 max-h-[70vh] sm:max-h-[420px] rounded-2xl bg-[rgba(12,14,22,0.97)] backdrop-blur-2xl border border-white/[0.08] shadow-[0_20px_60px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col z-[60]"
                   >
                     <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between">
                       <h4 className="text-sm font-bold">Notifications</h4>
-                      {unreadCount > 0 && (
-                        <button onClick={handleMarkAllRead} className="text-[11px] text-[#4F8CFF] hover:underline cursor-pointer">
-                          Mark all read
+                      <div className="flex items-center gap-3">
+                        {unreadCount > 0 && (
+                          <button onClick={handleMarkAllRead} className="text-[11px] text-[#4F8CFF] hover:underline cursor-pointer">
+                            Mark all read
+                          </button>
+                        )}
+                        <button onClick={() => setNotifOpen(false)} className="sm:hidden p-1 rounded-lg hover:bg-white/5 cursor-pointer">
+                          <X className="w-4 h-4 text-gray-500" />
                         </button>
-                      )}
+                      </div>
                     </div>
                     <div className="overflow-y-auto flex-1">
                       {notifications.length === 0 ? (
@@ -233,15 +227,15 @@ const Navbar = () => {
                           >
                             <div className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold ${
                               n.type === 'comment' || n.type === 'reply'
-                                ? 'bg-green-500/15 text-green-400'
+                                ? 'bg-emerald-500/15 text-emerald-400'
                                 : n.type === 'reaction'
-                                ? 'bg-yellow-500/15 text-yellow-400'
+                                ? 'bg-amber-500/15 text-amber-400'
                                 : 'bg-[#4F8CFF]/15 text-[#4F8CFF]'
                             }`}>
                               {n.type === 'comment' || n.type === 'reply' ? '💬' : n.type === 'reaction' ? '🎭' : '🗳️'}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs text-gray-300 leading-relaxed truncate">{n.message}</p>
+                              <p className="text-xs text-gray-300 leading-relaxed line-clamp-2">{n.message}</p>
                               <p className="text-[10px] text-gray-600 mt-0.5">{timeAgo(n.createdAt)}</p>
                             </div>
                             {!n.read && <div className="w-2 h-2 rounded-full bg-[#4F8CFF] shrink-0 mt-1.5" />}
@@ -254,25 +248,21 @@ const Navbar = () => {
               </AnimatePresence>
             </div>
 
-
-
-
             {/* Profile / Auth */}
             {user ? (
               <div className="relative" ref={profileRef}>
                 <motion.button
-                  whileTap={{ scale: 0.97 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => { setProfileOpen(!profileOpen); setNotifOpen(false); }}
-                  className="flex items-center gap-1.5 pl-1 pr-2 py-1 rounded-full hover:bg-white/5 transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 sm:gap-2 px-1.5 sm:px-2.5 py-1 sm:py-1.5 rounded-full hover:bg-white/5 transition-colors cursor-pointer"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#4F8CFF] to-[#8B5CF6] flex items-center justify-center text-[10px] font-bold text-white shadow-[0_0_10px_rgba(79,140,255,0.2)]">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-[#4F8CFF] to-[#8B5CF6] flex items-center justify-center text-[10px] sm:text-xs font-bold shadow-[0_0_12px_rgba(79,140,255,0.2)]">
                     {user.anonymousName?.substring(0, 2).toUpperCase()}
                   </div>
-                  <motion.div animate={{ rotate: profileOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                    <ChevronDown className="w-3.5 h-3.5 text-gray-500" />
-                  </motion.div>
+                  <span className="hidden sm:block text-sm font-medium text-gray-300 max-w-[100px] truncate">{user.anonymousName}</span>
                 </motion.button>
 
+                {/* Profile Dropdown */}
                 <AnimatePresence>
                   {profileOpen && (
                     <motion.div
@@ -280,33 +270,38 @@ const Navbar = () => {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 6, scale: 0.96 }}
                       transition={{ duration: 0.18 }}
-                      className="absolute right-0 top-full mt-2 w-60 rounded-2xl bg-[rgba(12,14,22,0.95)] backdrop-blur-xl border border-white/[0.08] shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden"
+                      className="fixed sm:absolute right-2 sm:right-0 left-2 sm:left-auto top-[60px] sm:top-full sm:mt-2 sm:w-56 rounded-2xl bg-[rgba(12,14,22,0.97)] backdrop-blur-2xl border border-white/[0.08] shadow-[0_20px_60px_rgba(0,0,0,0.6)] overflow-hidden z-[60]"
                     >
-                      <div className="px-4 py-3.5 border-b border-white/5">
-                        <p className="text-sm font-bold truncate">{user.anonymousName}</p>
-                        <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-0.5">Anonymous Citizen</p>
+                      {/* Profile Header */}
+                      <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#4F8CFF] to-[#8B5CF6] flex items-center justify-center text-xs font-bold">
+                            {user.anonymousName?.substring(0, 2).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-white">{user.anonymousName}</p>
+                            <p className="text-[10px] text-gray-500">{user.role === 'admin' ? '🛡️ Admin' : '👤 Anonymous'}</p>
+                          </div>
+                        </div>
+                        <button onClick={() => setProfileOpen(false)} className="sm:hidden p-1 rounded-lg hover:bg-white/5 cursor-pointer">
+                          <X className="w-4 h-4 text-gray-500" />
+                        </button>
                       </div>
+                      {/* Menu Items */}
                       <div className="py-1">
-                        {[
-                          { to: '/profile', icon: User, label: 'My Profile' },
-                          { to: '/profile', icon: PlusSquare, label: 'My Posts' },
-                          { to: '/profile', icon: Bookmark, label: 'Bookmarks' },
-                          { to: '/contact', icon: Settings, label: 'Settings' },
-                        ].map((item) => (
-                          <Link key={item.label} to={item.to} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors">
-                            <item.icon className="w-4 h-4" /> {item.label}
+                        <Link to="/profile" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors">
+                          <User className="w-4 h-4" /> My Profile
+                        </Link>
+                        <Link to="/profile" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors">
+                          <FileText className="w-4 h-4" /> My Confessions
+                        </Link>
+                        {user.role === 'admin' && (
+                          <Link to="/admin" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#4F8CFF] hover:bg-[#4F8CFF]/5 transition-colors">
+                            <Settings className="w-4 h-4" /> Admin Dashboard
                           </Link>
-                        ))}
+                        )}
                       </div>
-                      <div className="border-t border-white/5 py-1">
-                        <Link to="/privacy" className="flex items-center gap-3 px-4 py-2 text-[13px] text-gray-500 hover:text-gray-300 hover:bg-white/5 transition-colors">
-                          <Shield className="w-3.5 h-3.5" /> Privacy Policy
-                        </Link>
-                        <Link to="/terms" className="flex items-center gap-3 px-4 py-2 text-[13px] text-gray-500 hover:text-gray-300 hover:bg-white/5 transition-colors">
-                          <FileText className="w-3.5 h-3.5" /> User Agreement
-                        </Link>
-                      </div>
-                      <div className="border-t border-white/5 py-1">
+                      <div className="border-t border-white/5">
                         <button
                           onClick={logout}
                           className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-colors cursor-pointer"
@@ -319,12 +314,12 @@ const Navbar = () => {
                 </AnimatePresence>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <Link to="/login" className="px-4 py-1.5 rounded-full text-sm font-medium text-gray-400 hover:text-white transition-colors hidden sm:block">
+              <div className="flex items-center gap-1 sm:gap-2">
+                <Link to="/login" className="px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium text-gray-400 hover:text-white transition-colors hidden sm:block">
                   Login
                 </Link>
-                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                  <Link to="/register" className="px-4 py-1.5 rounded-full text-sm font-semibold bg-gradient-to-r from-[#4F8CFF] to-[#8B5CF6] text-white shadow-[0_0_12px_rgba(79,140,255,0.2)] hover:shadow-[0_0_20px_rgba(79,140,255,0.35)] transition-shadow inline-block">
+                <motion.div whileTap={{ scale: 0.95 }}>
+                  <Link to="/register" className="px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-gradient-to-r from-[#4F8CFF] to-[#8B5CF6] text-white shadow-[0_0_12px_rgba(79,140,255,0.2)] hover:shadow-[0_0_20px_rgba(79,140,255,0.35)] transition-shadow inline-block">
                     Sign Up
                   </Link>
                 </motion.div>
@@ -335,8 +330,8 @@ const Navbar = () => {
       </nav>
 
       {/* ═══ MOBILE BOTTOM NAV ═══ */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[rgba(8,10,18,0.9)] backdrop-blur-xl border-t border-white/[0.06] safe-area-bottom">
-        <div className="flex items-center justify-around h-[60px] px-2 max-w-md mx-auto">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[rgba(8,10,18,0.92)] backdrop-blur-2xl border-t border-white/[0.06]" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+        <div className="flex items-center justify-around h-[56px] px-2 max-w-md mx-auto">
           {[
             { to: '/home', icon: Home, label: 'Home' },
             { to: '/home?sort=explore', icon: Compass, label: 'Explore' },
@@ -351,9 +346,13 @@ const Navbar = () => {
                   key={item.to}
                   to={item.to}
                   onClick={item.auth && !user ? (e) => { e.preventDefault(); openAuthModal(); } : undefined}
-                  className="relative -mt-5"
+                  className="relative -mt-4"
                 >
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#4F8CFF] to-[#8B5CF6] flex items-center justify-center shadow-[0_0_20px_rgba(79,140,255,0.3)]">
+                  <div className={`w-11 h-11 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(79,140,255,0.3)] ${
+                    active 
+                      ? 'bg-gradient-to-br from-[#4F8CFF] to-[#8B5CF6]' 
+                      : 'bg-gradient-to-br from-[#4F8CFF]/80 to-[#8B5CF6]/80'
+                  }`}>
                     <PlusSquare className="w-5 h-5 text-white" />
                   </div>
                 </Link>
@@ -364,9 +363,9 @@ const Navbar = () => {
                 key={item.to}
                 to={item.to}
                 onClick={item.auth && !user ? (e) => { e.preventDefault(); openAuthModal(); } : undefined}
-                className="flex flex-col items-center gap-0.5 py-1"
+                className="flex flex-col items-center gap-0.5 py-1 min-w-[48px]"
               >
-                <item.icon className={`w-5 h-5 transition-colors duration-200 ${
+                <item.icon className={`w-[20px] h-[20px] transition-colors duration-200 ${
                   active ? 'text-[#4F8CFF] drop-shadow-[0_0_6px_rgba(79,140,255,0.5)]' : 'text-gray-600'
                 }`} />
                 <span className={`text-[10px] font-medium transition-colors duration-200 ${
