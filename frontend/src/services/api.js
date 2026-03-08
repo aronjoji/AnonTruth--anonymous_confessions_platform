@@ -1,9 +1,13 @@
 import axios from 'axios';
 
-export const SOCKET_URL = 'http://127.0.0.1:5000';
+// In production, the backend serves the frontend, so API calls go to the same origin
+// In development, Vite proxy forwards /api to localhost:5000
+const isProd = import.meta.env.PROD;
+
+export const SOCKET_URL = isProd ? '' : 'http://127.0.0.1:5000';
 
 const API = axios.create({
-  baseURL: '/api'
+  baseURL: isProd ? '/api' : '/api'
 });
 
 API.interceptors.request.use((req) => {
