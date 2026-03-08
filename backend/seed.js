@@ -93,6 +93,25 @@ async function seed() {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('🔌 Connected to MongoDB');
 
+    // ── 0. Create Admin ──
+    console.log('\n🛡️  Creating admin account...');
+    const adminEmail = process.env.ADMIN_EMAIL || 'aronjoji9@gmail.com';
+    let admin = await User.findOne({ email: adminEmail });
+    if (admin) {
+      admin.role = 'admin';
+      await admin.save();
+      console.log(`   ↳ ${admin.anonymousName} (updated to admin) ✅`);
+    } else {
+      admin = new User({
+        email: adminEmail,
+        password: 'admin1234',
+        anonymousName: 'AnonAdmin',
+        role: 'admin',
+      });
+      await admin.save();
+      console.log(`   ↳ AnonAdmin created ✅ (email: ${adminEmail}, password: admin1234)`);
+    }
+
     // ── 1. Create Users ──
     console.log('\n👥 Creating users...');
     const users = [];
