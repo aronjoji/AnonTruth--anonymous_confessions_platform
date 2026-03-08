@@ -172,56 +172,58 @@ const ConfessionCard = ({ confession, onVote, onReact, onDelete, index = 0 }) =>
             </div>
           </div>
 
-          <div className="flex items-center gap-4 pt-4 border-t border-white/5">
-            <Link to={`/confession/${confession._id}`} className="flex items-center gap-2 text-sm text-gray-400 hover:text-accent-cyan transition-colors">
-              <MessageSquare className="w-4 h-4" /> {confession.commentCount || 0} Comments
-            </Link>
-            
-            {/* Reactions Bar with Floating Emojis */}
-            <div className="flex items-center gap-2 md:gap-4 p-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm relative">
-              <FloatingEmojiContainer className="absolute inset-0" />
-              {[
-                { type: 'funny', emoji: '😂', label: 'Funny' },
-                { type: 'shocking', emoji: '😲', label: 'Shocking' },
-                { type: 'sad', emoji: '😢', label: 'Sad' },
-                { type: 'crazy', emoji: '🤪', label: 'Crazy' }
-              ].map((reaction) => (
-                <motion.button
-                  key={reaction.type}
-                  whileHover={{ scale: 1.3, y: -4 }}
-                  whileTap={{ scale: 0.8, rotate: [0, -15, 15, 0] }}
-                  transition={{ type: 'spring', stiffness: 500, damping: 15 }}
-                  onClick={() => handleReaction(reaction.type, reaction.emoji)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-white/10 transition-colors group relative"
-                  title={reaction.label}
-                >
-                  <span className="text-lg leading-none">{reaction.emoji}</span>
-                  {confession.reactions?.[reaction.type] > 0 && (
-                    <AnimatedCounter
-                      value={confession.reactions[reaction.type]}
-                      className="text-[10px] font-black font-mono text-gray-400 group-hover:text-white transition-colors"
-                    />
-                  )}
-                </motion.button>
-              ))}
+          <div className="pt-4 border-t border-white/5 space-y-3">
+            {/* Row 1: Comments + Reactions */}
+            <div className="flex items-center gap-3 flex-wrap">
+              <Link to={`/confession/${confession._id}`} className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-300 hover:text-[#4F8CFF] transition-colors">
+                <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {confession.commentCount || 0} Comments
+              </Link>
+
+              {/* Reactions */}
+              <div className="flex items-center gap-1 sm:gap-2 p-0.5 sm:p-1 rounded-full bg-white/5 border border-white/10 relative">
+                <FloatingEmojiContainer className="absolute inset-0" />
+                {[
+                  { type: 'funny', emoji: '😂', label: 'Funny' },
+                  { type: 'shocking', emoji: '😲', label: 'Shocking' },
+                  { type: 'sad', emoji: '😢', label: 'Sad' },
+                  { type: 'crazy', emoji: '🤪', label: 'Crazy' }
+                ].map((reaction) => (
+                  <motion.button
+                    key={reaction.type}
+                    whileTap={{ scale: 0.8 }}
+                    onClick={() => handleReaction(reaction.type, reaction.emoji)}
+                    className="flex items-center gap-1 px-1.5 sm:px-2.5 py-1 rounded-full hover:bg-white/10 transition-colors group relative"
+                    title={reaction.label}
+                  >
+                    <span className="text-sm sm:text-lg leading-none">{reaction.emoji}</span>
+                    {confession.reactions?.[reaction.type] > 0 && (
+                      <AnimatedCounter
+                        value={confession.reactions[reaction.type]}
+                        className="text-[9px] sm:text-[10px] font-black font-mono text-gray-400 group-hover:text-white transition-colors"
+                      />
+                    )}
+                  </motion.button>
+                ))}
+              </div>
             </div>
 
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleStartChat}
-              className="flex items-center gap-2 text-sm text-gray-400 hover:text-[#4F8CFF] transition-colors"
-            >
-              <MessageCircle className="w-4 h-4" /> Chat
-            </motion.button>
+            {/* Row 2: Chat + Share */}
+            <div className="flex items-center gap-3">
+              <motion.button 
+                whileTap={{ scale: 0.9 }}
+                onClick={handleStartChat}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#4F8CFF]/10 border border-[#4F8CFF]/20 text-xs sm:text-sm text-[#4F8CFF] hover:bg-[#4F8CFF]/20 transition-colors cursor-pointer"
+              >
+                <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Chat
+              </motion.button>
 
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors ml-auto"
-            >
-              <Share2 className="w-4 h-4" /> Share
-            </motion.button>
+              <motion.button 
+                whileTap={{ scale: 0.9 }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs sm:text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors ml-auto cursor-pointer"
+              >
+                <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Share
+              </motion.button>
+            </div>
           </div>
           
         </GlassCard>

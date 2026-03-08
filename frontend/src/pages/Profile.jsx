@@ -57,49 +57,49 @@ const Profile = () => {
 
   return (
     <PageTransition>
-    <div className="max-w-6xl mx-auto px-6 pt-24 pb-20">
+    <div className="max-w-3xl mx-auto px-3 sm:px-6 pt-20 sm:pt-24 pb-24 lg:pb-20">
       {/* Profile Header */}
-      <div className="grid md:grid-cols-3 gap-8 mb-12">
-        <GlassCard className="md:col-span-1 p-8 flex flex-col items-center text-center border-accent-cyan/20">
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-accent-cyan to-accent-violet flex items-center justify-center text-3xl font-black mb-6 shadow-[0_0_30px_rgba(6,182,212,0.3)]">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 mb-8 sm:mb-12">
+        <GlassCard className="md:col-span-1 p-5 sm:p-8 flex flex-col items-center text-center border-accent-cyan/20">
+          <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-accent-cyan to-accent-violet flex items-center justify-center text-xl sm:text-3xl font-black mb-4 sm:mb-6 shadow-[0_0_30px_rgba(6,182,212,0.3)]">
             {user?.anonymousName?.substring(0, 2).toUpperCase()}
           </div>
-          <h2 className="text-2xl font-black mb-2">{user?.anonymousName}</h2>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-cyan/10 text-accent-cyan text-[10px] font-bold uppercase tracking-widest border border-accent-cyan/20">
+          <h2 className="text-lg sm:text-2xl font-black mb-2">{user?.anonymousName}</h2>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-cyan/10 text-accent-cyan text-[9px] sm:text-[10px] font-bold uppercase tracking-widest border border-accent-cyan/20">
             <Shield className="w-3 h-3" /> Anonymous Citizen
           </div>
         </GlassCard>
 
         {/* Stats Grid */}
-        <div className="md:col-span-2 grid grid-cols-2 sm:grid-cols-3 gap-4">
-          <GlassCard className="p-6 flex flex-col justify-center">
-            <Zap className="w-5 h-5 text-yellow-500 mb-3" />
-            <span className="text-[10px] text-gray-500 uppercase font-black tracking-widest">Neural Impact</span>
-            <h4 className="text-3xl font-black mt-1"><AnimatedCounter value={stats?.neuralImpact || 0} /></h4>
+        <div className="md:col-span-2 grid grid-cols-3 gap-3 sm:gap-4">
+          <GlassCard className="p-4 sm:p-6 flex flex-col justify-center">
+            <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500 mb-2 sm:mb-3" />
+            <span className="text-[8px] sm:text-[10px] text-gray-500 uppercase font-black tracking-widest">Impact</span>
+            <h4 className="text-xl sm:text-3xl font-black mt-1"><AnimatedCounter value={stats?.neuralImpact || 0} /></h4>
           </GlassCard>
-          <GlassCard className="p-6 flex flex-col justify-center">
-            <Ghost className="w-5 h-5 text-accent-cyan mb-3" />
-            <span className="text-[10px] text-gray-500 uppercase font-black tracking-widest">Truths Shared</span>
-            <h4 className="text-3xl font-black mt-1"><AnimatedCounter value={stats?.totalConfessions || 0} /></h4>
+          <GlassCard className="p-4 sm:p-6 flex flex-col justify-center">
+            <Ghost className="w-4 h-4 sm:w-5 sm:h-5 text-accent-cyan mb-2 sm:mb-3" />
+            <span className="text-[8px] sm:text-[10px] text-gray-500 uppercase font-black tracking-widest">Truths</span>
+            <h4 className="text-xl sm:text-3xl font-black mt-1"><AnimatedCounter value={stats?.totalConfessions || 0} /></h4>
           </GlassCard>
-          <GlassCard className="p-6 flex flex-col justify-center">
-            <BarChart3 className="w-5 h-5 text-accent-violet mb-3" />
-            <span className="text-[10px] text-gray-500 uppercase font-black tracking-widest">Votes Received</span>
-            <h4 className="text-3xl font-black mt-1"><AnimatedCounter value={stats?.totalVotesReceived || 0} /></h4>
+          <GlassCard className="p-4 sm:p-6 flex flex-col justify-center">
+            <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-accent-violet mb-2 sm:mb-3" />
+            <span className="text-[8px] sm:text-[10px] text-gray-500 uppercase font-black tracking-widest">Votes</span>
+            <h4 className="text-xl sm:text-3xl font-black mt-1"><AnimatedCounter value={stats?.totalVotesReceived || 0} /></h4>
           </GlassCard>
         </div>
       </div>
 
-      <div className="space-y-8">
-        <div className="flex items-center gap-4">
-          <h3 className="text-2xl font-black flex items-center gap-3">
-            <MessageSquare className="w-6 h-6 text-accent-cyan" />
-            My Neural Echoes
+      <div className="space-y-6 sm:space-y-8">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <h3 className="text-lg sm:text-2xl font-black flex items-center gap-2 sm:gap-3">
+            <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-accent-cyan" />
+            My Confessions
           </h3>
           <div className="h-px flex-1 bg-white/5" />
         </div>
 
-        <div className="grid gap-6">
+        <div className="grid gap-4 sm:gap-6">
           {confessions.map(confession => (
             <ConfessionCard 
               key={confession._id} 
@@ -109,8 +109,8 @@ const Profile = () => {
           ))}
 
           {confessions.length === 0 && (
-            <div className="text-center py-20 glass rounded-3xl border-dashed border-white/10">
-              <p className="text-gray-500 text-lg">You haven't left any echoes in the void yet.</p>
+            <div className="text-center py-16 sm:py-20 glass rounded-3xl border-dashed border-white/10">
+              <p className="text-gray-500 text-sm sm:text-lg">You haven't left any echoes in the void yet.</p>
             </div>
           )}
         </div>
