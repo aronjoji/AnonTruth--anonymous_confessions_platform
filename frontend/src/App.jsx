@@ -76,6 +76,7 @@ const AppContent = () => {
               </ProtectedRoute>
             } />
             <Route path="/confession/:id" element={<ConfessionDetail />} />
+            <Route path="/post/:id" element={<ConfessionDetail />} />
             <Route path="/chat/:id" element={
               <ProtectedRoute>
                 <AnonChat />
@@ -98,13 +99,17 @@ const AppContent = () => {
   );
 };
 
+import { HelmetProvider } from 'react-helmet-async';
+
 const App = () => {
   return (
-    <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </AuthProvider>
+    <HelmetProvider>
+      <AuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AuthProvider>
+    </HelmetProvider>
   );
 };
 

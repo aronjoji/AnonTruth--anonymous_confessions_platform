@@ -10,11 +10,13 @@ import { useAuth } from '../hooks/useAuth';
 import { startAnonChat } from '../services/api';
 import { useState } from 'react';
 import toast from './Toast';
+import ShareModal from './ShareModal';
 
 const ConfessionCard = ({ confession, onVote, onReact, onDelete, index = 0 }) => {
   const { user, openAuthModal } = useAuth();
   const navigate = useNavigate();
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const { spawn, FloatingEmojiContainer } = useFloatingEmojis();
   const totalVotes = confession.trueVotes + confession.fakeVotes;
@@ -219,6 +221,7 @@ const ConfessionCard = ({ confession, onVote, onReact, onDelete, index = 0 }) =>
 
               <motion.button 
                 whileTap={{ scale: 0.9 }}
+                onClick={() => setIsShareModalOpen(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs sm:text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors ml-auto cursor-pointer"
               >
                 <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Share
@@ -234,6 +237,12 @@ const ConfessionCard = ({ confession, onVote, onReact, onDelete, index = 0 }) =>
         onClose={() => setIsReportModalOpen(false)} 
         itemId={confession._id} 
         itemType="confession" 
+      />
+
+      <ShareModal 
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        confession={confession}
       />
     </>
   );

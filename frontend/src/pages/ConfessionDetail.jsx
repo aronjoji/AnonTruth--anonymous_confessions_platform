@@ -11,6 +11,7 @@ import PageTransition from '../components/PageTransition';
 import { useAuth } from '../hooks/useAuth';
 import { Send, MessageSquare, Loader2, Image as ImageIcon } from 'lucide-react';
 import toast from '../components/Toast';
+import { Helmet } from 'react-helmet-async';
 
 const ConfessionDetail = () => {
   const { id } = useParams();
@@ -206,6 +207,16 @@ const ConfessionDetail = () => {
 
   return (
     <PageTransition>
+      {confession && (
+        <Helmet>
+          <title>Anonymous Truth | Confession</title>
+          <meta name="description" content={confession.text.substring(0, 160)} />
+          <meta property="og:title" content="Anonymous Confession on AnonTruth" />
+          <meta property="og:description" content={confession.text.substring(0, 120)} />
+          <meta property="og:url" content={window.location.href} />
+          {confession.image && <meta property="og:image" content={confession.image} />}
+        </Helmet>
+      )}
     <div className="max-w-4xl mx-auto px-6 pt-24 pb-20">
       {confession && (
         <ConfessionCard 

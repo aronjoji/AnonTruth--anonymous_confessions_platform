@@ -396,3 +396,17 @@ exports.reactToConfession = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+exports.shareConfession = async (req, res) => {
+  try {
+    const confession = await Confession.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { shareCount: 1 } },
+      { new: true }
+    );
+    if (!confession) return res.status(404).json({ message: 'Confession not found' });
+    res.json({ shareCount: confession.shareCount });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

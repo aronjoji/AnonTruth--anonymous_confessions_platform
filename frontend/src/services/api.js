@@ -31,6 +31,7 @@ export const createConfession = (formData) => API.post('/confessions', formData,
 });
 export const voteConfession = (id, voteType) => API.post(`/confessions/${id}/vote`, { voteType });
 export const reactToConfession = (id, reactionType) => API.post(`/confessions/${id}/react`, { reactionType });
+export const shareConfession = (id) => API.post(`/confessions/${id}/share`);
 export const deleteConfession = (id) => API.delete(`/confessions/${id}`);
 export const searchConfessions = (params) => API.get('/confessions/search/query', { params });
 

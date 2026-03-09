@@ -10,6 +10,7 @@ router.get('/my', auth, confessionController.getMyConfessions);
 router.get('/:id', confessionController.getConfessionById);
 router.post('/:id/vote', auth, confessionController.voteConfession);
 router.post('/:id/react', auth, confessionController.reactToConfession);
+router.post('/:id/share', confessionController.shareConfession);
 router.delete('/:id', auth, confessionController.deleteMyConfession);
 
 // Search confessions by keyword or tag
