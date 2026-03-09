@@ -24,17 +24,27 @@ body {
   color: #fff;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ═══════════════════════════════════════════
-   GLASS MORPHISM SYSTEM
+   GLASS MORPHISM SYSTEM — Dark-backed for readability
    ═══════════════════════════════════════════ */
 .glass {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(10, 12, 20, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+}
+
+/* Lighter glass for subtle elements */
+.glass-light {
+  background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 /* ═══════════════════════════════════════════
@@ -178,6 +188,16 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   MOBILE RESPONSIVE TYPOGRAPHY
+   ═══════════════════════════════════════════ */
+@media (max-width: 640px) {
+  body {
+    font-size: 15px;
+    line-height: 1.6;
   }
 }
 

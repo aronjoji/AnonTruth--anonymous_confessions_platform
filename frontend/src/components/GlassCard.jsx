@@ -21,9 +21,15 @@ const GlassCard = ({ children, className = "", delay = 0 }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
       onMouseMove={handleMouseMove}
-      className={`glass rounded-3xl p-6 border border-white/10 transition-all duration-300 group relative overflow-hidden
+      className={`rounded-3xl p-4 sm:p-6 border border-white/[0.08] transition-all duration-300 group relative overflow-hidden
         hover:border-accent-cyan/30 hover:shadow-[0_0_30px_rgba(6,182,212,0.1)] ${className}`}
-      style={{ willChange: 'transform, opacity' }}
+      style={{
+        willChange: 'transform, opacity',
+        background: 'rgba(10, 12, 20, 0.78)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+      }}
     >
       {/* Mouse-tracking glow */}
       <div
@@ -37,7 +43,7 @@ const GlassCard = ({ children, className = "", delay = 0 }) => {
       />
       {/* Inner shimmer */}
       <div className="absolute inset-0 shimmer rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-      {/* Content */}
+      {/* Content — always on top */}
       <div className="relative z-10">
         {children}
       </div>
