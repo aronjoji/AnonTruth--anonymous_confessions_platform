@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Copy, Share2, Download, Send, Twitter, MessageCircle } from 'lucide-react';
 import { toPng } from 'html-to-image';
@@ -8,8 +9,21 @@ import { shareConfession } from '../services/api';
 const ShareModal = ({ isOpen, onClose, confession }) => {
   const cardRef = useRef(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  if (!confession) return null;
+  useEffect(() => {
+    setMounted(true);
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
+  if (!confession || !mounted) return null;
 
   const shareUrl = `${window.location.origin}/post/${confession._id}`;
   const encodedUrl = encodeURIComponent(shareUrl);
@@ -69,23 +83,23 @@ const ShareModal = ({ isOpen, onClose, confession }) => {
     { name: 'Telegram', icon: Send, color: 'bg-blue-500', url: `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}` },
   ];
 
-  return (
+  const modalContent = (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm"
           />
 
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative w-full max-w-lg bg-[#0c0e16] border border-white/10 rounded-3xl overflow-hidden shadow-2xl"
+            className="relative w-full max-w-lg bg-[#0c0e16] border border-white/10 rounded-3xl overflow-hidden shadow-2xl my-auto"
           >
             {/* Modal Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
@@ -148,7 +162,7 @@ const ShareModal = ({ isOpen, onClose, confession }) => {
               </div>
 
               {/* Hidden Share Card for Export */}
-              <div className="absolute left-[-9999px] top-[-9999px]">
+              <div className="fixed left-[-9999px] top-[-9999px] pointer-events-none">
                 <div 
                   ref={cardRef}
                   className="w-[500px] p-10 bg-[#09090b] relative overflow-hidden flex flex-col items-center text-center justify-center"
@@ -193,6 +207,8 @@ const ShareModal = ({ isOpen, onClose, confession }) => {
       )}
     </AnimatePresence>
   );
+
+  return mounted ? createPortal(modalContent, document.body) : null;
 };
 
 export default ShareModal;
