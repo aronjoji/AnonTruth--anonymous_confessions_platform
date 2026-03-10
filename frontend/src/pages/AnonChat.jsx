@@ -59,7 +59,10 @@ const AnonChat = () => {
   }, [id, navigate]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Immediate scroll on new messages
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
+    }
   }, [messages]);
 
   const handleSend = async (e) => {

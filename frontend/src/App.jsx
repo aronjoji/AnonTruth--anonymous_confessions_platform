@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollProgress from './components/ScrollProgress';
+import ScrollToTop from './components/ScrollToTop';
 import FloatingPostButton from './components/FloatingPostButton';
 import ParticleField from './components/ParticleField';
 import Landing from './pages/Landing';
@@ -46,6 +47,7 @@ const AppContent = () => {
 
   return (
     <div className="relative min-h-screen animated-gradient-bg flex flex-col">
+      <ScrollToTop />
       <ScrollProgress />
       <Navbar />
       <AuthModal />
