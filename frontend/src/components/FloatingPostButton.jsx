@@ -1,10 +1,13 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Plus } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const FloatingPostButton = () => {
   const { user, openAuthModal } = useAuth();
+  const location = useLocation();
+
+  const isChatPage = location.pathname.startsWith('/chat/');
 
   const handleClick = (e) => {
     if (!user) {
@@ -14,9 +17,12 @@ const FloatingPostButton = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0, y: 20 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
+    <AnimatePresence>
+      {!isChatPage && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0, y: 20 }}
       transition={{ delay: 0.5, type: 'spring', stiffness: 200, damping: 15 }}
       className="fixed bottom-24 lg:bottom-8 right-6 z-40 group"
     >
@@ -37,7 +43,9 @@ const FloatingPostButton = () => {
         Create Post
         <div className="absolute left-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-l-4 border-transparent border-l-[rgba(12,14,22,0.9)]" />
       </div>
-    </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
