@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react';
 import { getMyConfessions, deleteConfession, getUserStats } from '../services/api';
 import ConfessionCard from '../components/ConfessionCard';
 import GlassCard from '../components/GlassCard';
-import AnimatedCounter from '../components/AnimatedCounter';
 import PageTransition from '../components/PageTransition';
-import { Ghost, Loader2, Trash2, Zap, MessageSquare, BarChart3, Shield } from 'lucide-react';
+import { Ghost, Loader2, Zap, MessageSquare, BarChart3, Shield } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import toast from '../components/Toast';
 
@@ -35,85 +34,85 @@ const Profile = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this truth? This cannot be undone.')) return;
+    if (!window.confirm('Delete this post? This cannot be undone.')) return;
     try {
       await deleteConfession(id);
-      toast.success('Truth erased from the network');
+      toast.success('Post deleted');
       setConfessions(prev => prev.filter(c => c._id !== id));
-      // Refresh stats
       const statsRes = await getUserStats();
       setStats(statsRes.data);
     } catch (err) {
-      toast.error('Failed to delete confession');
+      toast.error('Failed to delete');
     }
   };
 
   if (loading) return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-      <Loader2 className="w-12 h-12 text-accent-cyan animate-spin" />
-      <p className="text-gray-500 font-medium">Synchronizing neural profile...</p>
+    <div className="min-h-screen flex flex-col items-center justify-center gap-3">
+      <Loader2 className="w-8 h-8 text-[#FF4500] animate-spin" />
+      <p className="text-[#818384] text-sm">Loading profile...</p>
     </div>
   );
 
   return (
     <PageTransition>
-    <div className="max-w-3xl mx-auto px-3 sm:px-6 pt-20 sm:pt-24 pb-24 lg:pb-20">
+    <div className="max-w-[680px] mx-auto px-3 sm:px-4 pt-16 sm:pt-20 pb-24 lg:pb-16">
       {/* Profile Header */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 mb-8 sm:mb-12">
-        <GlassCard className="md:col-span-1 p-5 sm:p-8 flex flex-col items-center text-center border-accent-cyan/20">
-          <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-accent-cyan to-accent-violet flex items-center justify-center text-xl sm:text-3xl font-black mb-4 sm:mb-6 shadow-[0_0_30px_rgba(6,182,212,0.3)]">
+      <div className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-5 sm:p-6 mb-4">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#FF4500] flex items-center justify-center text-xl sm:text-2xl font-bold text-white">
             {user?.anonymousName?.substring(0, 2).toUpperCase()}
           </div>
-          <h2 className="text-lg sm:text-2xl font-black mb-2">{user?.anonymousName}</h2>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-cyan/10 text-accent-cyan text-[9px] sm:text-[10px] font-bold uppercase tracking-widest border border-accent-cyan/20">
-            <Shield className="w-3 h-3" /> Anonymous Citizen
+          <div>
+            <h2 className="text-lg sm:text-xl font-bold text-[#d7dadc]">{user?.anonymousName}</h2>
+            <div className="inline-flex items-center gap-1.5 text-xs text-[#818384] mt-1">
+              <Shield className="w-3.5 h-3.5 text-[#FF4500]" /> Anonymous User
+            </div>
           </div>
-        </GlassCard>
-
-        {/* Stats Grid */}
-        <div className="md:col-span-2 grid grid-cols-3 gap-3 sm:gap-4">
-          <GlassCard className="p-4 sm:p-6 flex flex-col justify-center">
-            <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500 mb-2 sm:mb-3" />
-            <span className="text-[8px] sm:text-[10px] text-gray-500 uppercase font-black tracking-widest">Impact</span>
-            <h4 className="text-xl sm:text-3xl font-black mt-1"><AnimatedCounter value={stats?.neuralImpact || 0} /></h4>
-          </GlassCard>
-          <GlassCard className="p-4 sm:p-6 flex flex-col justify-center">
-            <Ghost className="w-4 h-4 sm:w-5 sm:h-5 text-accent-cyan mb-2 sm:mb-3" />
-            <span className="text-[8px] sm:text-[10px] text-gray-500 uppercase font-black tracking-widest">Truths</span>
-            <h4 className="text-xl sm:text-3xl font-black mt-1"><AnimatedCounter value={stats?.totalConfessions || 0} /></h4>
-          </GlassCard>
-          <GlassCard className="p-4 sm:p-6 flex flex-col justify-center">
-            <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-accent-violet mb-2 sm:mb-3" />
-            <span className="text-[8px] sm:text-[10px] text-gray-500 uppercase font-black tracking-widest">Votes</span>
-            <h4 className="text-xl sm:text-3xl font-black mt-1"><AnimatedCounter value={stats?.totalVotesReceived || 0} /></h4>
-          </GlassCard>
         </div>
       </div>
 
-      <div className="space-y-6 sm:space-y-8">
-        <div className="flex items-center gap-3 sm:gap-4">
-          <h3 className="text-lg sm:text-2xl font-black flex items-center gap-2 sm:gap-3">
-            <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-accent-cyan" />
-            My Confessions
-          </h3>
-          <div className="h-px flex-1 bg-white/5" />
-        </div>
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-3 mb-4">
+        <GlassCard className="p-4 flex flex-col items-center text-center">
+          <Zap className="w-4 h-4 text-yellow-500 mb-1.5" />
+          <span className="text-[10px] text-[#818384] uppercase font-bold">Impact</span>
+          <span className="text-xl font-bold text-[#d7dadc] mt-0.5">{stats?.neuralImpact || 0}</span>
+        </GlassCard>
+        <GlassCard className="p-4 flex flex-col items-center text-center">
+          <Ghost className="w-4 h-4 text-[#FF4500] mb-1.5" />
+          <span className="text-[10px] text-[#818384] uppercase font-bold">Posts</span>
+          <span className="text-xl font-bold text-[#d7dadc] mt-0.5">{stats?.totalConfessions || 0}</span>
+        </GlassCard>
+        <GlassCard className="p-4 flex flex-col items-center text-center">
+          <BarChart3 className="w-4 h-4 text-[#7193FF] mb-1.5" />
+          <span className="text-[10px] text-[#818384] uppercase font-bold">Votes</span>
+          <span className="text-xl font-bold text-[#d7dadc] mt-0.5">{stats?.totalVotesReceived || 0}</span>
+        </GlassCard>
+      </div>
 
-        <div className="grid gap-4 sm:gap-6">
-          {confessions.map(confession => (
-            <ConfessionCard 
-              key={confession._id} 
-              confession={confession} 
-              onDelete={() => handleDelete(confession._id)}
-            />
-          ))}
+      {/* My Confessions */}
+      <div className="flex items-center gap-3 mb-4 mt-6">
+        <h3 className="text-base font-bold text-[#d7dadc] flex items-center gap-2">
+          <MessageSquare className="w-5 h-5 text-[#FF4500]" />
+          My Posts
+        </h3>
+        <div className="h-px flex-1 bg-[#343536]" />
+      </div>
 
-          {confessions.length === 0 && (
-            <div className="text-center py-16 sm:py-20 glass rounded-3xl border-dashed border-white/10">
-              <p className="text-gray-500 text-sm sm:text-lg">You haven't left any echoes in the void yet.</p>
-            </div>
-          )}
-        </div>
+      <div className="space-y-3">
+        {confessions.map(confession => (
+          <ConfessionCard 
+            key={confession._id} 
+            confession={confession} 
+            onDelete={() => handleDelete(confession._id)}
+          />
+        ))}
+
+        {confessions.length === 0 && (
+          <div className="text-center py-12 bg-[#1a1a1b] border border-[#343536] rounded-lg">
+            <p className="text-[#818384] text-sm">You haven't posted anything yet.</p>
+          </div>
+        )}
       </div>
     </div>
     </PageTransition>

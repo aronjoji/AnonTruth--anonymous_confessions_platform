@@ -52,11 +52,14 @@ exports.login = async (req, res) => {
 
     if (user.isBanned) return res.status(403).json({ message: 'User is banned' });
 
+    user.lastLogin = Date.now();
+
     // Auto-promote if matches ADMIN_EMAIL
     if (process.env.ADMIN_EMAIL && user.email === process.env.ADMIN_EMAIL && user.role !== 'admin') {
       user.role = 'admin';
-      await user.save();
     }
+    
+    await user.save();
 
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '30d' });
     res.status(200).json({ token, user: { anonymousName: user.anonymousName, role: user.role } });

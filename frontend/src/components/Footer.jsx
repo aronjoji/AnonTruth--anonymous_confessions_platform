@@ -18,34 +18,32 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="relative z-10 border-t border-white/5 mt-20">
-      <div className="max-w-7xl mx-auto px-6 py-16">
+    <footer className="relative z-10 border-t border-[#343536] mt-12 bg-[#1a1a1b]">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
         {/* Top Section */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
-          <div className="md:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="p-2 bg-accent-cyan/20 rounded-lg">
-                <Shield className="w-5 h-5 text-accent-cyan" />
+          <div className="col-span-2 md:col-span-1">
+            <Link to="/" className="flex items-center gap-2 mb-3">
+              <div className="w-7 h-7 rounded-full bg-[#FF4500] flex items-center justify-center">
+                <Shield className="w-4 h-4 text-white" />
               </div>
-              <span className="text-lg font-bold tracking-tighter gradient-text">AnonTruth</span>
+              <span className="text-base font-bold text-[#d7dadc]">
+                anon<span className="text-[#FF4500]">truth</span>
+              </span>
             </Link>
-            <p className="text-gray-500 text-sm leading-relaxed">
+            <p className="text-[#818384] text-sm leading-relaxed">
               A safe space for anonymous expression. Share your truth without fear.
             </p>
           </div>
 
-          {/* Navigation */}
+          {/* Navigate */}
           <div>
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-4">Navigate</h4>
-            <ul className="space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#818384] mb-3">Navigate</h4>
+            <ul className="space-y-2">
               {navLinks.map((link) => (
                 <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-sm text-gray-500 hover:text-white transition-colors flex items-center gap-2"
-                  >
-                    <link.icon className="w-3.5 h-3.5" />
+                  <Link to={link.to} className="text-sm text-[#818384] hover:text-[#d7dadc] transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -55,15 +53,11 @@ const Footer = () => {
 
           {/* Legal */}
           <div>
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-4">Legal</h4>
-            <ul className="space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#818384] mb-3">Legal</h4>
+            <ul className="space-y-2">
               {legalLinks.slice(0, 3).map((link) => (
                 <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-sm text-gray-500 hover:text-white transition-colors flex items-center gap-2"
-                  >
-                    <link.icon className="w-3.5 h-3.5" />
+                  <Link to={link.to} className="text-sm text-[#818384] hover:text-[#d7dadc] transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -73,15 +67,11 @@ const Footer = () => {
 
           {/* Support */}
           <div>
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-4">Support</h4>
-            <ul className="space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#818384] mb-3">Support</h4>
+            <ul className="space-y-2">
               {legalLinks.slice(3).map((link) => (
                 <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-sm text-gray-500 hover:text-white transition-colors flex items-center gap-2"
-                  >
-                    <link.icon className="w-3.5 h-3.5" />
+                  <Link to={link.to} className="text-sm text-[#818384] hover:text-[#d7dadc] transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -91,15 +81,15 @@ const Footer = () => {
         </div>
 
         {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-8" />
+        <div className="h-px bg-[#343536] mb-6" />
 
-        {/* Bottom Section */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-gray-600">
+        {/* Bottom */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pb-20 lg:pb-0">
+          <p className="text-xs text-[#818384]">
             &copy; 2026 AnonTruth. All rights reserved.
           </p>
-          <p className="text-xs text-gray-600 flex items-center gap-1.5">
-            Designed and developed by <a href="https://aronjoji.netlify.app" target="_blank" rel="noopener noreferrer" className="text-accent-cyan font-semibold hover:underline">Aron Joji</a>
+          <p className="text-xs text-[#818384] flex items-center gap-1.5">
+            Built by <a href="https://aronjoji.netlify.app" target="_blank" rel="noopener noreferrer" className="text-[#FF4500] font-semibold hover:underline">Aron Joji</a>
             <Heart className="w-3 h-3 text-red-500 fill-red-500" />
           </p>
         </div>

@@ -4,12 +4,30 @@ const Notification = require('../models/Notification');
 
 exports.createConfession = async (req, res) => {
   try {
-    const { text, category, location } = req.body;
+    let { text, category, location } = req.body;
+    
+    // Validate required fields
+    if (!text || typeof text !== 'string' || text.trim().length === 0) {
+      return res.status(400).json({ message: 'Text is required' });
+    }
+    if (text.length > 5000) {
+      return res.status(400).json({ message: 'Text exceeds maximum length of 5000 characters' });
+    }
+    
+    // Sanitize: strip HTML tags
+    text = text.replace(/<[^>]*>/g, '').trim();
+    
+    // Validate category
+    const validCategories = ['relationship', 'school', 'work', 'crime', 'funny', 'random'];
+    if (category && !validCategories.includes(category)) {
+      return res.status(400).json({ message: 'Invalid category' });
+    }
+
     const image = req.file ? req.file.path : null;
     const confession = new Confession({
       text,
       image,
-      category,
+      category: category || 'random',
       location: typeof location === 'string' ? JSON.parse(location) : location,
       userId: req.user.id
     });
@@ -284,6 +302,9 @@ exports.getConfessionById = async (req, res) => {
 exports.voteConfession = async (req, res) => {
   try {
     const { voteType } = req.body;
+    if (!['true', 'fake'].includes(voteType)) {
+      return res.status(400).json({ message: 'Invalid vote type' });
+    }
     const confessionId = req.params.id;
     const userId = req.user.id;
 
@@ -354,6 +375,10 @@ exports.deleteMyConfession = async (req, res) => {
 exports.reactToConfession = async (req, res) => {
   try {
     const { reactionType } = req.body;
+    const validReactions = ['funny', 'shocking', 'sad', 'crazy'];
+    if (!validReactions.includes(reactionType)) {
+      return res.status(400).json({ message: 'Invalid reaction type' });
+    }
     const confessionId = req.params.id;
 
     const confession = await Confession.findById(confessionId);

@@ -1,38 +1,23 @@
-import { motion } from 'framer-motion';
-
-const Button = ({ children, onClick, className = "", variant = "primary", icon: Icon, type = "submit" }) => {
+const Button = ({ children, onClick, className = "", variant = "primary", icon: Icon, type = "submit", disabled = false, title }) => {
   const variants = {
-    primary: "bg-accent-cyan text-black hover:bg-white hover:shadow-[0_0_30px_rgba(6,182,212,0.4)]",
-    secondary: "glass border-white/10 hover:border-white/30 hover:shadow-[0_0_20px_rgba(255,255,255,0.05)] text-white",
-    outline: "border border-accent-cyan/50 text-accent-cyan hover:bg-accent-cyan/10 hover:shadow-[0_0_25px_rgba(6,182,212,0.15)]",
+    primary: "bg-[#FF4500] text-white hover:bg-[#FF5722] active:bg-[#E03D00]",
+    secondary: "bg-[#1a1a1b] border border-[#343536] text-[#d7dadc] hover:border-[#4a4a4b] hover:bg-[#272729]",
+    outline: "border border-[#343536] text-[#d7dadc] hover:bg-[#272729] hover:border-[#4a4a4b]",
   };
 
   return (
-    <motion.button
-      whileHover={{ 
-        scale: 1.03, 
-        y: -2,
-      }}
-      whileTap={{ 
-        scale: 0.95,
-      }}
-      transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+    <button
       onClick={onClick}
       type={type}
-      className={`px-6 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${variants[variant]} ${className}`}
-      style={{ willChange: 'transform' }}
+      disabled={disabled}
+      title={title}
+      className={`px-4 py-2 rounded-full font-semibold text-sm flex items-center justify-center gap-2 
+        transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+        ${variants[variant]} ${className}`}
     >
-      {Icon && (
-        <motion.span
-          initial={{ rotate: 0 }}
-          whileHover={{ rotate: [0, -10, 10, 0] }}
-          transition={{ duration: 0.4 }}
-        >
-          <Icon className="w-5 h-5" />
-        </motion.span>
-      )}
+      {Icon && <Icon className="w-4 h-4" />}
       {children}
-    </motion.button>
+    </button>
   );
 };
 

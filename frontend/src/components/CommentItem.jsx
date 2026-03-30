@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, Heart, ThumbsUp, Reply, Smile, Trash2, AlertTriangle } from 'lucide-react';
+import { Reply, AlertTriangle } from 'lucide-react';
 import GlassCard from './GlassCard';
 import Button from './Button';
 import ReportModal from './ReportModal';
@@ -26,115 +25,104 @@ const CommentItem = ({ comment, allComments, onReply, onReact, depth = 0 }) => {
   };
 
   return (
-    <div className={`space-y-4 ${depth > 0 ? 'ml-6 md:ml-12 border-l border-white/5 pl-4 md:pl-8' : ''}`}>
-      <GlassCard className="p-6 relative group border-white/5 hover:border-accent-cyan/20 transition-all">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className={`w-8 h-8 rounded-full bg-gradient-to-br from-accent-violet/20 to-accent-cyan/10 flex items-center justify-center text-[10px] font-bold text-accent-violet`}>
-              {comment.userId?.anonymousName?.substring(0, 2).toUpperCase()}
-            </div>
-            <div>
-              <h5 className="font-bold text-sm text-gray-300">{comment.userId?.anonymousName}</h5>
-              <span className="text-[10px] text-gray-600 uppercase tracking-wider">
-                {new Date(comment.createdAt).toLocaleTimeString()}
-              </span>
-            </div>
+    <div className={`space-y-3 ${depth > 0 ? 'ml-4 sm:ml-8 border-l-2 border-[#343536] pl-3 sm:pl-6' : ''}`}>
+      <div className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-4 hover:border-[#4a4a4b] transition-colors">
+        {/* Header */}
+        <div className="flex items-center gap-2 mb-2">
+          <div className="w-7 h-7 rounded-full bg-[#FF4500] flex items-center justify-center text-[10px] font-bold text-white">
+            {comment.userId?.anonymousName?.substring(0, 2).toUpperCase()}
           </div>
-          
-          <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-             {/* Future: Add delete for admin/owner */}
-          </div>
+          <span className="text-xs font-semibold text-[#d7dadc]">{comment.userId?.anonymousName}</span>
+          <span className="text-[10px] text-[#818384]">
+            {new Date(comment.createdAt).toLocaleTimeString()}
+          </span>
         </div>
 
-        <p className="text-gray-300 text-sm leading-relaxed mb-6">
+        {/* Text */}
+        <p className="text-sm text-[#d7dadc] leading-relaxed mb-3">
           {comment.text}
         </p>
 
+        {/* Image */}
         {comment.image && (
-          <div className="mb-6 rounded-2xl overflow-hidden border border-white/10 glass max-w-sm">
+          <div className="mb-3 rounded-lg overflow-hidden border border-[#343536] max-w-sm">
             <img 
               src={comment.image} 
-              alt="Comment Visual" 
-              className="w-full h-auto max-h-[300px] object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-500" 
+              alt="Comment image" 
+              loading="lazy"
+              className="w-full h-auto max-h-[300px] object-cover cursor-pointer hover:opacity-90 transition-opacity" 
               onClick={() => window.open(comment.image, '_blank')}
             />
           </div>
         )}
 
-        <div className="flex flex-wrap items-center gap-4 md:gap-6 pt-4 border-t border-white/5">
-          {/* Unified Reaction Bar for Comments */}
-          <div className="flex items-center gap-1 p-1 rounded-full bg-white/5 border border-white/10">
+        {/* Actions */}
+        <div className="flex items-center gap-1 -ml-1">
+          {/* Reactions */}
+          <div className="flex items-center gap-0.5">
             {[
               { type: 'funny', emoji: '😂' },
               { type: 'shocking', emoji: '😲' },
               { type: 'sad', emoji: '😢' },
               { type: 'crazy', emoji: '🤪' }
             ].map((reaction) => (
-              <motion.button
+              <button
                 key={reaction.type}
-                whileHover={{ scale: 1.2, y: -2 }}
-                whileTap={{ scale: 0.9 }}
                 onClick={() => onReact && onReact(comment._id, reaction.type)}
-                className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-white/10 transition-colors group"
+                className="flex items-center gap-1 px-1.5 py-1 rounded hover:bg-[#272729] transition-colors cursor-pointer"
               >
                 <span className="text-sm">{reaction.emoji}</span>
                 {comment.reactions?.[reaction.type] > 0 && (
-                  <span className="text-[10px] font-bold text-gray-500 group-hover:text-white transition-colors">
+                  <span className="text-[10px] font-medium text-[#818384]">
                     {comment.reactions[reaction.type]}
                   </span>
                 )}
-              </motion.button>
+              </button>
             ))}
           </div>
           
           {depth < maxDepth && (
             <button 
               onClick={() => setIsReplying(!isReplying)}
-              className={`flex items-center gap-2 text-xs transition-colors ${isReplying ? 'text-accent-cyan' : 'text-gray-500 hover:text-white'}`}
+              className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-semibold transition-colors cursor-pointer ${
+                isReplying ? 'text-[#FF4500]' : 'text-[#818384] hover:bg-[#272729] hover:text-[#d7dadc]'
+              }`}
             >
-              <Reply className="w-4 h-4" /> Reply
+              <Reply className="w-3.5 h-3.5" /> Reply
             </button>
           )}
 
           <button 
             onClick={() => setIsReportModalOpen(true)}
-            className="flex items-center gap-2 text-xs text-gray-500 hover:text-red-500 transition-colors ml-auto"
+            className="flex items-center gap-1.5 px-2 py-1 rounded text-xs text-[#818384] hover:bg-[#272729] hover:text-[#d7dadc] transition-colors ml-auto cursor-pointer"
           >
-            <AlertTriangle className="w-4 h-4" /> Report
+            <AlertTriangle className="w-3.5 h-3.5" /> Report
           </button>
         </div>
 
         {/* Reply Form */}
-        <AnimatePresence>
-          {isReplying && (
-            <motion.form 
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              onSubmit={handleReplySubmit}
-              className="mt-6 overflow-hidden"
-            >
-              <textarea
-                className="w-full glass p-4 rounded-2xl outline-none focus:border-accent-cyan transition-all min-h-[80px] text-sm resize-none border-white/10"
-                placeholder={`Replying to ${comment.userId?.anonymousName}...`}
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
-                autoFocus
-              />
-              <div className="flex justify-end mt-2 gap-2">
-                <button 
-                  type="button"
-                  onClick={() => setIsReplying(false)}
-                  className="px-4 py-2 text-xs font-bold text-gray-500 hover:text-white transition-colors"
-                >
-                  Cancel
-                </button>
-                <Button className="py-2 px-4 text-xs">Send Reply</Button>
-              </div>
-            </motion.form>
-          )}
-        </AnimatePresence>
-      </GlassCard>
+        {isReplying && (
+          <form onSubmit={handleReplySubmit} className="mt-3">
+            <textarea
+              className="w-full bg-[#272729] border border-[#343536] rounded-lg p-3 outline-none focus:border-[#FF4500] transition-colors min-h-[70px] text-sm resize-none text-[#d7dadc] placeholder-[#818384]"
+              placeholder={`Replying to ${comment.userId?.anonymousName}...`}
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+              autoFocus
+            />
+            <div className="flex justify-end mt-2 gap-2">
+              <button 
+                type="button"
+                onClick={() => setIsReplying(false)}
+                className="px-3 py-1.5 text-xs font-semibold text-[#818384] hover:text-[#d7dadc] transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <Button className="py-1.5 px-4 text-xs">Reply</Button>
+            </div>
+          </form>
+        )}
+      </div>
 
       <ReportModal 
         isOpen={isReportModalOpen} 
@@ -145,7 +133,7 @@ const CommentItem = ({ comment, allComments, onReply, onReact, depth = 0 }) => {
 
       {/* Render children */}
       {replies.length > 0 && (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {replies.map(reply => (
             <CommentItem 
               key={reply._id} 

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { Mail, Lock, Ghost, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import Button from '../components/Button';
@@ -27,25 +26,25 @@ const Register = () => {
 
   return (
     <PageTransition>
-    <div className="min-h-screen flex items-center justify-center px-6 pt-20">
-      <GlassCard className="max-w-md w-full p-8">
-        <div className="text-center mb-10">
-          <div className="inline-flex p-4 bg-accent-cyan/20 rounded-2xl mb-6">
-            <Ghost className="w-10 h-10 text-accent-cyan" />
+    <div className="min-h-screen flex items-center justify-center px-4 pt-16">
+      <GlassCard className="max-w-md w-full p-6 sm:p-8">
+        <div className="text-center mb-8">
+          <div className="inline-flex p-3 bg-[#FF4500]/10 rounded-xl mb-4">
+            <Ghost className="w-8 h-8 text-[#FF4500]" />
           </div>
-          <h2 className="text-3xl font-black mb-2">Join the Shadows</h2>
-          <p className="text-gray-400">Your real identity stays hidden. Forever.</p>
+          <h2 className="text-2xl font-bold text-[#d7dadc] mb-2">Join AnonTruth</h2>
+          <p className="text-[#818384] text-sm">Your real identity stays hidden. Forever.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-400 ml-1">Email Address</label>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-[#818384] ml-1">Email</label>
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#818384]" />
               <input 
                 type="email" 
                 required
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 focus:border-accent-cyan outline-none transition-all"
+                className="w-full bg-[#272729] border border-[#343536] rounded-lg py-3 pl-10 pr-4 focus:border-[#FF4500] outline-none transition-colors text-[#d7dadc] placeholder-[#818384]"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -53,14 +52,14 @@ const Register = () => {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-400 ml-1">Password</label>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-[#818384] ml-1">Password</label>
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#818384]" />
               <input 
                 type="password" 
                 required
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 focus:border-accent-cyan outline-none transition-all"
+                className="w-full bg-[#272729] border border-[#343536] rounded-lg py-3 pl-10 pr-4 focus:border-[#FF4500] outline-none transition-colors text-[#d7dadc] placeholder-[#818384]"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -68,18 +67,18 @@ const Register = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-gray-500 px-2">
-            <ShieldCheck className="w-4 h-4 text-accent-cyan" />
+          <div className="flex items-center gap-2 text-xs text-[#818384] px-1">
+            <ShieldCheck className="w-4 h-4 text-[#FF4500]" />
             <span>An anonymous username will be generated for you.</span>
           </div>
 
-          <Button className="w-full py-4" icon={ArrowRight}>
-            Create Anonymous Account
+          <Button className="w-full py-3" icon={ArrowRight}>
+            Create Account
           </Button>
         </form>
 
-        <p className="text-center mt-8 text-sm text-gray-400">
-          Already a member? <Link to="/login" className="text-accent-cyan font-bold hover:underline">Login</Link>
+        <p className="text-center mt-6 text-sm text-[#818384]">
+          Already a member? <Link to="/login" className="text-[#FF4500] font-semibold hover:underline">Log In</Link>
         </p>
       </GlassCard>
     </div>

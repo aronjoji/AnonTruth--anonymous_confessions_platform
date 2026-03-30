@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Send, Image as ImageIcon, MapPin, Hash, Shield, AlertCircle } from 'lucide-react';
+import { Send, Image as ImageIcon, MapPin, Hash, Shield } from 'lucide-react';
 import { createConfession } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import Button from '../components/Button';
@@ -40,7 +39,7 @@ const CreateConfession = () => {
       openAuthModal();
       return;
     }
-    if (text.length < 10) return toast.error('Confession too short!');
+    if (text.length < 10) return toast.error('Post too short! (Min 10 chars)');
 
     try {
       setLoading(true);
@@ -62,10 +61,10 @@ const CreateConfession = () => {
       if (location) formData.append('location', JSON.stringify(location));
 
       await createConfession(formData);
-      toast.success('Truth shared anonymously!');
+      toast.success('Posted anonymously!');
       navigate('/home');
     } catch (err) {
-      toast.error('Failed to post confession');
+      toast.error('Failed to post');
     } finally {
       setLoading(false);
     }
@@ -73,64 +72,57 @@ const CreateConfession = () => {
 
   return (
     <PageTransition>
-    <div className="max-w-3xl mx-auto px-6 pt-24 pb-20">
-      <div className="mb-10 text-center">
-        <h2 className="text-4xl font-black mb-4 gradient-text">Release Your Truth</h2>
-        <p className="text-gray-400">Your confession will be encrypted and shared anonymously.</p>
+    <div className="max-w-2xl mx-auto px-4 pt-16 sm:pt-20 pb-24 lg:pb-16">
+      <div className="mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-[#d7dadc]">Create a Post</h2>
+        <p className="text-sm text-[#818384] mt-1">Your confession will be shared anonymously.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <GlassCard className="p-0 overflow-hidden">
           {imagePreview && (
-            <div className="relative w-full h-64 border-b border-white/10">
+            <div className="relative w-full h-48 sm:h-64 border-b border-[#343536]">
               <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
               <button 
                 type="button" 
                 onClick={() => { setImage(null); setImagePreview(null); }}
-                className="absolute top-4 right-4 p-2 bg-black/50 backdrop-blur-md rounded-full hover:bg-black/70 transition-all"
+                className="absolute top-3 right-3 p-2 bg-black/60 rounded-lg hover:bg-black/80 transition-colors cursor-pointer"
               >
-                <ImageIcon className="w-5 h-5 text-white" />
+                <ImageIcon className="w-4 h-4 text-white" />
               </button>
             </div>
           )}
           <textarea 
-            className="w-full bg-transparent p-8 text-xl min-h-[300px] outline-none resize-none placeholder:text-white/10"
-            placeholder="What's your secret? Start typing here..."
+            className="w-full bg-transparent p-4 sm:p-6 text-[15px] sm:text-base min-h-[200px] sm:min-h-[250px] outline-none resize-none text-[#d7dadc] placeholder-[#818384]"
+            placeholder="What's on your mind? Share your confession..."
             value={text}
             onChange={(e) => setText(e.target.value)}
             required
           />
-          <div className="bg-white/5 p-4 flex items-center justify-between border-t border-white/10">
-            <div className="flex items-center gap-4">
-              <label 
-                className={`p-2 rounded-xl transition-all cursor-pointer flex items-center gap-2 ${image ? 'bg-accent-violet/20 text-accent-violet' : 'hover:bg-white/5 text-gray-400'}`}
-              >
-                <ImageIcon className="w-6 h-6" />
-                {image && <span className="text-xs font-bold">Image Set</span>}
-                <input 
-                  type="file" 
-                  className="hidden" 
-                  accept="image/*" 
-                  onChange={handleImageChange} 
-                />
+          <div className="bg-[#272729] p-3 flex items-center justify-between border-t border-[#343536]">
+            <div className="flex items-center gap-2">
+              <label className={`p-2 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-medium ${image ? 'bg-[#FF4500]/10 text-[#FF4500]' : 'hover:bg-[#343536] text-[#818384]'}`}>
+                <ImageIcon className="w-5 h-5" />
+                {image && <span>Image</span>}
+                <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
               </label>
               <button 
                 type="button" 
                 onClick={() => setUseLocation(!useLocation)}
-                className={`p-2 rounded-xl transition-all flex items-center gap-2 ${useLocation ? 'bg-accent-cyan/20 text-accent-cyan' : 'hover:bg-white/5 text-gray-400'}`}
+                className={`p-2 rounded-lg transition-colors flex items-center gap-1.5 text-xs font-medium cursor-pointer ${useLocation ? 'bg-[#FF4500]/10 text-[#FF4500]' : 'hover:bg-[#343536] text-[#818384]'}`}
               >
-                <MapPin className="w-6 h-6" />
-                {useLocation && <span className="text-xs font-bold">Location ON</span>}
+                <MapPin className="w-5 h-5" />
+                {useLocation && <span>Location ON</span>}
               </button>
             </div>
-            <span className="text-xs text-gray-500 font-medium">{text.length} characters</span>
+            <span className="text-xs text-[#818384]">{text.length}</span>
           </div>
         </GlassCard>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="space-y-4">
-            <label className="flex items-center gap-2 text-sm font-bold text-gray-400">
-              <Hash className="w-4 h-4" /> Select Category
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="flex items-center gap-1.5 text-sm font-medium text-[#818384]">
+              <Hash className="w-4 h-4" /> Category
             </label>
             <div className="grid grid-cols-2 gap-2">
               {categories.map(cat => (
@@ -138,7 +130,11 @@ const CreateConfession = () => {
                   key={cat}
                   type="button"
                   onClick={() => setCategory(cat)}
-                  className={`px-4 py-3 rounded-xl text-sm font-medium capitalize transition-all ${category === cat ? 'bg-accent-cyan text-black font-bold' : 'glass hover:bg-white/5 text-gray-400'}`}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium capitalize transition-colors cursor-pointer ${
+                    category === cat 
+                      ? 'bg-[#FF4500] text-white' 
+                      : 'bg-[#1a1a1b] border border-[#343536] text-[#818384] hover:border-[#4a4a4b]'
+                  }`}
                 >
                   {cat}
                 </button>
@@ -146,20 +142,18 @@ const CreateConfession = () => {
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="glass p-6 rounded-3xl border-white/10 flex items-start gap-4">
-              <div className="p-2 bg-accent-violet/20 rounded-xl">
-                <Shield className="w-6 h-6 text-accent-violet" />
-              </div>
+          <div className="space-y-3">
+            <div className="bg-[#1a1a1b] border border-[#343536] rounded-lg p-4 flex items-start gap-3">
+              <Shield className="w-5 h-5 text-[#FF4500] shrink-0 mt-0.5" />
               <div>
-                <h4 className="font-bold text-sm mb-1">Safety First</h4>
-                <p className="text-xs text-gray-500 leading-relaxed">
-                  Avoid mentioning real names or specific addresses. Our AI moderates all content to prevent harassment.
+                <h4 className="font-semibold text-sm text-[#d7dadc] mb-1">Safety Note</h4>
+                <p className="text-xs text-[#818384] leading-relaxed">
+                  Avoid mentioning real names or addresses. All content is moderated.
                 </p>
               </div>
             </div>
-            <Button className="w-full py-4 text-lg" icon={Send} disabled={loading}>
-              {loading ? 'Transmitting...' : 'Transmit Confession'}
+            <Button className="w-full py-3" icon={Send} disabled={loading}>
+              {loading ? 'Posting...' : 'Post Anonymously'}
             </Button>
           </div>
         </div>

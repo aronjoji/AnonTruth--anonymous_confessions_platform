@@ -41,6 +41,7 @@ export const createComment = (formData) => API.post('/comments', formData, {
 });
 export const reactToComment = (id, reactionType) => API.post(`/comments/${id}/react`, { reactionType });
 export const reportContent = (data) => API.post('/reports', data);
+export const submitContactForm = (data) => API.post('/contact', data);
 
 // Notifications
 export const getNotifications = (params) => API.get('/notifications', { params });

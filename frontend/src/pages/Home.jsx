@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { getConfessions, voteConfession, reactToConfession, SOCKET_URL } from '../services/api';
 import ConfessionCard from '../components/ConfessionCard';
 import PageTransition from '../components/PageTransition';
@@ -126,7 +125,6 @@ const Home = () => {
 
     try {
       await voteConfession(id, voteType);
-      toast.success('Vote submitted!');
     } catch (err) {
       toast.error('Failed to vote');
       fetchConfessions(1, true); 
@@ -152,114 +150,70 @@ const Home = () => {
   };
 
   const filterButtons = [
-    { id: 'newest', label: 'Newest', Icon: Clock },
-    { id: 'trending', label: 'Trending', Icon: TrendingUp },
+    { id: 'newest', label: 'New', Icon: Clock },
+    { id: 'trending', label: 'Hot', Icon: TrendingUp },
     { id: 'top', label: 'Top', Icon: ArrowUpDown },
-    { id: 'controversial', label: 'Controversial', Icon: Zap },
+    { id: 'controversial', label: 'Spicy', Icon: Zap },
   ];
 
   return (
     <PageTransition>
-      <div className="max-w-[800px] mx-auto px-3 sm:px-6 pt-20 sm:pt-24 pb-24 lg:pb-20 relative">
-        {/* Radial glow behind feed */}
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-accent-cyan/[0.03] blur-[100px] rounded-full pointer-events-none" />
-        {/* Segmented Feed Control */}
-        <div className="mb-6 sm:mb-8 -mx-3 sm:mx-0 px-3 sm:px-0 overflow-x-auto scrollbar-hide">
-          <div className="relative inline-flex items-center gap-1 p-1 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-            {filterButtons.map((btn) => (
-              <button
-                key={btn.id}
-                onClick={() => setFilter(btn.id)}
-                className={`relative px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium whitespace-nowrap transition-colors duration-300 cursor-pointer z-10 ${
-                  filter === btn.id ? 'text-black' : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                {filter === btn.id && (
-                  <motion.div
-                    layoutId="feed-tab-bg"
-                    className="absolute inset-0 bg-white rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.15)]"
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                  />
-                )}
-                <span className="relative z-10 flex items-center gap-1.5 sm:gap-2">
-                  <btn.Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {btn.label}
-                </span>
-              </button>
-            ))}
-          </div>
+      <div className="max-w-[680px] mx-auto px-2 sm:px-4 pt-16 sm:pt-20 pb-24 lg:pb-16">
+        {/* Sort Tabs */}
+        <div className="bg-[#1a1a1b] border border-[#343536] rounded-lg mb-3 px-2 sm:px-3 py-2 flex items-center gap-1 sm:gap-2 overflow-x-auto scrollbar-hide">
+          {filterButtons.map((btn) => (
+            <button
+              key={btn.id}
+              onClick={() => setFilter(btn.id)}
+              className={`flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+                filter === btn.id
+                  ? 'bg-[#272729] text-[#d7dadc]'
+                  : 'text-[#818384] hover:bg-[#272729] hover:text-[#d7dadc]'
+              }`}
+            >
+              <btn.Icon className="w-4 h-4" />
+              {btn.label}
+            </button>
+          ))}
         </div>
 
         {loading ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex flex-col items-center justify-center py-20 gap-4"
-          >
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-            >
-              <Loader2 className="w-10 h-10 text-accent-cyan" />
-            </motion.div>
-            <motion.p
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="text-gray-500 font-medium"
-            >
-              Scanning the neural network...
-            </motion.p>
-          </motion.div>
+          <div className="flex flex-col items-center justify-center py-20 gap-3">
+            <Loader2 className="w-8 h-8 text-[#FF4500] animate-spin" />
+            <p className="text-[#818384] text-sm">Loading posts...</p>
+          </div>
         ) : (
-          <div className="space-y-6">
-            <AnimatePresence mode="popLayout">
-              {confessions.map((confession, index) => (
-                <motion.div
-                  key={confession._id}
-                  ref={index === confessions.length - 1 ? lastElementRef : null}
-                  layout
-                  exit={{ opacity: 0, x: 60, filter: 'blur(5px)', transition: { duration: 0.3 } }}
-                >
-                  <ConfessionCard 
-                    confession={confession} 
-                    onVote={handleVote}
-                    onReact={handleReact}
-                    index={index}
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
+          <div className="space-y-3">
+            {confessions.map((confession, index) => (
+              <div
+                key={confession._id}
+                ref={index === confessions.length - 1 ? lastElementRef : null}
+              >
+                <ConfessionCard 
+                  confession={confession} 
+                  onVote={handleVote}
+                  onReact={handleReact}
+                  index={index}
+                />
+              </div>
+            ))}
 
             {fetchingMore && (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex justify-center py-8"
-              >
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                >
-                  <Loader2 className="w-6 h-6 text-accent-cyan" />
-                </motion.div>
-              </motion.div>
+              <div className="flex justify-center py-6">
+                <Loader2 className="w-6 h-6 text-[#FF4500] animate-spin" />
+              </div>
             )}
             
-            {!hasMore && confessions.length > 0 ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-center py-12 text-gray-600 font-medium italic"
-              >
-                You've reached the end of the void.
-              </motion.div>
-            ) : confessions.length === 0 && !loading && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-20 glass rounded-3xl border-dashed border-white/10"
-              >
-                <p className="text-gray-500">No truths found in this dimension yet.</p>
-              </motion.div>
+            {!hasMore && confessions.length > 0 && (
+              <div className="text-center py-8 text-[#818384] text-sm">
+                You've reached the end of the feed.
+              </div>
+            )}
+
+            {confessions.length === 0 && !loading && (
+              <div className="text-center py-16 bg-[#1a1a1b] border border-[#343536] rounded-lg">
+                <p className="text-[#818384]">No posts found. Be the first to share!</p>
+              </div>
             )}
           </div>
         )}

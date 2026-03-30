@@ -1,11 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { io } from 'socket.io-client';
 import { getConfessionById, getComments, createComment, reactToComment, voteConfession, reactToConfession, SOCKET_URL } from '../services/api';
 import ConfessionCard from '../components/ConfessionCard';
 import CommentItem from '../components/CommentItem';
-import GlassCard from '../components/GlassCard';
 import Button from '../components/Button';
 import PageTransition from '../components/PageTransition';
 import { useAuth } from '../hooks/useAuth';
@@ -29,7 +27,7 @@ const ConfessionDetail = () => {
 
     socketRef.current.on('content_deleted', (data) => {
       if (data.id === id) {
-        toast.error('This neural trace has been purged by the Oracle.');
+        toast.error('This post has been removed.');
         navigate('/');
       } else if (data.type === 'comment') {
         setComments(prev => prev.filter(c => c._id !== data.id));
@@ -38,7 +36,7 @@ const ConfessionDetail = () => {
 
     socketRef.current.on('content_hidden', (data) => {
       if (data.id === id && data.isHidden) {
-        toast.error('This neural trace has been concealed by the Oracle.');
+        toast.error('This post has been hidden.');
         navigate('/');
       } else if (data.type === 'comment' && data.isHidden) {
         setComments(prev => prev.filter(c => c._id !== data.id));
@@ -97,7 +95,7 @@ const ConfessionDetail = () => {
       setConfession(confRes.data);
       setComments(commRes.data);
     } catch (err) {
-      toast.error('Failed to load confession details');
+      toast.error('Failed to load post');
     } finally {
       setLoading(false);
     }
@@ -107,7 +105,6 @@ const ConfessionDetail = () => {
 
   const handleVote = async (id, voteType) => {
     if (!user) return openAuthModal();
-    // Optimistic update
     setConfession(prev => ({
       ...prev,
       trueVotes: voteType === 'true' ? prev.trueVotes + 1 : prev.trueVotes,
@@ -116,16 +113,14 @@ const ConfessionDetail = () => {
 
     try {
       await voteConfession(id, voteType);
-      toast.success('Vote submitted!');
     } catch (err) {
       toast.error('Failed to vote');
-      fetchData(); // Rollback/Refresh
+      fetchData();
     }
   };
 
   const handleReact = async (id, reactionType) => {
     if (!user) return openAuthModal();
-    // Optimistic update
     setConfession(prev => {
       const reactions = { ...prev.reactions };
       reactions[reactionType] = (reactions[reactionType] || 0) + 1;
@@ -153,7 +148,7 @@ const ConfessionDetail = () => {
       setNewComment('');
       setCommentImage(null);
       setCommentImagePreview(null);
-      toast.success('Comment posted anonymously');
+      toast.success('Comment posted');
       const res = await getComments(id);
       setComments(res.data);
     } catch (err) {
@@ -170,17 +165,16 @@ const ConfessionDetail = () => {
       formData.append('parentId', parentId);
 
       await createComment(formData);
-      toast.success('Reply transmitted');
+      toast.success('Reply posted');
       const res = await getComments(id);
       setComments(res.data);
     } catch (err) {
-      toast.error('Failed to post reply');
+      toast.error('Failed to reply');
     }
   };
 
   const handleCommentReact = async (commentId, reactionType) => {
     if (!user) return openAuthModal();
-    // Optimistic update
     setComments(prev => prev.map(c => {
       if (c._id === commentId) {
         const reactions = { ...c.reactions };
@@ -199,7 +193,7 @@ const ConfessionDetail = () => {
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center">
-      <Loader2 className="w-12 h-12 text-accent-cyan animate-spin" />
+      <Loader2 className="w-8 h-8 text-[#FF4500] animate-spin" />
     </div>
   );
 
@@ -209,7 +203,7 @@ const ConfessionDetail = () => {
     <PageTransition>
       {confession && (
         <Helmet>
-          <title>Anonymous Truth | Confession</title>
+          <title>AnonTruth | Confession</title>
           <meta name="description" content={confession.text.substring(0, 160)} />
           <meta property="og:title" content="Anonymous Confession on AnonTruth" />
           <meta property="og:description" content={confession.text.substring(0, 120)} />
@@ -217,7 +211,7 @@ const ConfessionDetail = () => {
           {confession.image && <meta property="og:image" content={confession.image} />}
         </Helmet>
       )}
-    <div className="max-w-4xl mx-auto px-6 pt-24 pb-20">
+    <div className="max-w-[680px] mx-auto px-2 sm:px-4 pt-16 sm:pt-20 pb-24 lg:pb-16">
       {confession && (
         <ConfessionCard 
           confession={confession} 
@@ -226,46 +220,46 @@ const ConfessionDetail = () => {
         />
       )}
 
-      <div className="mt-12 space-y-8">
-        <h3 className="text-2xl font-black flex items-center gap-3">
-          <MessageSquare className="w-6 h-6 text-accent-cyan" />
-          Neural Responses
+      <div className="mt-6 space-y-4">
+        <h3 className="text-base font-bold text-[#d7dadc] flex items-center gap-2">
+          <MessageSquare className="w-5 h-5 text-[#FF4500]" />
+          Comments ({comments.length})
         </h3>
 
         {/* Comment Form */}
-        <form onSubmit={handleComment} className="relative flex flex-col gap-4">
-          <GlassCard className="p-0 overflow-hidden border-white/10 group focus-within:border-accent-cyan transition-all">
+        <form onSubmit={handleComment}>
+          <div className="bg-[#1a1a1b] border border-[#343536] rounded-lg overflow-hidden focus-within:border-[#FF4500] transition-colors">
             {commentImagePreview && (
-              <div className="relative w-full h-48 border-b border-white/10">
+              <div className="relative w-full h-40 border-b border-[#343536]">
                 <img src={commentImagePreview} alt="Preview" className="w-full h-full object-cover" />
                 <button 
                   type="button" 
                   onClick={() => { setCommentImage(null); setCommentImagePreview(null); }}
-                  className="absolute top-2 right-2 p-1 bg-black/50 backdrop-blur-md rounded-full hover:bg-black/70 transition-all"
+                  className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-lg hover:bg-black/80 transition-colors cursor-pointer"
                 >
                   <ImageIcon className="w-4 h-4 text-white" />
                 </button>
               </div>
             )}
             <textarea
-              className="w-full bg-transparent p-6 outline-none min-h-[120px] resize-none text-white placeholder:text-gray-600"
-              placeholder="Add your anonymous response..."
+              className="w-full bg-transparent p-4 outline-none min-h-[100px] resize-none text-[#d7dadc] text-sm placeholder-[#818384]"
+              placeholder="What are your thoughts?"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
             />
-            <div className="bg-white/5 p-3 flex items-center justify-between border-t border-white/10">
-              <label className="p-2 hover:bg-white/5 rounded-xl transition-colors text-gray-400 cursor-pointer flex items-center gap-2">
-                <ImageIcon className="w-5 h-5" />
-                {commentImage && <span className="text-[10px] font-bold uppercase tracking-widest text-accent-violet animate-pulse">Neural Data Ready</span>}
+            <div className="bg-[#272729] p-2.5 flex items-center justify-between border-t border-[#343536]">
+              <label className="p-1.5 hover:bg-[#343536] rounded-lg transition-colors text-[#818384] cursor-pointer flex items-center gap-1.5 text-xs">
+                <ImageIcon className="w-4 h-4" />
+                {commentImage && <span className="font-medium text-[#FF4500]">Image added</span>}
                 <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
               </label>
-              <Button className="py-2 px-6" icon={Send}>Post</Button>
+              <Button className="py-1.5 px-5 text-xs" icon={Send}>Comment</Button>
             </div>
-          </GlassCard>
+          </div>
         </form>
 
         {/* Comments List */}
-        <div className="space-y-8">
+        <div className="space-y-3">
           {rootComments.map(comment => (
             <CommentItem 
               key={comment._id} 
@@ -276,7 +270,9 @@ const ConfessionDetail = () => {
             />
           ))}
           {comments.length === 0 && (
-            <div className="text-center py-20 opacity-30 italic font-medium">No responses yet. Break the silence.</div>
+            <div className="text-center py-12 text-[#818384] text-sm">
+              No comments yet. Be the first to respond.
+            </div>
           )}
         </div>
       </div>

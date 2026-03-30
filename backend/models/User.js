@@ -25,6 +25,20 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  trustScore: {
+    type: Number,
+    default: 100,
+    min: 0,
+    max: 100
+  },
+  warningsCount: {
+    type: Number,
+    default: 0
+  },
+  lastLogin: {
+    type: Date,
+    default: Date.now
+  },
   createdAt: {
     type: Date,
     default: Date.now,

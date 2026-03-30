@@ -1,28 +1,35 @@
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
+import { lazy, Suspense } from 'react';
+import { Loader2 } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import ScrollProgress from './components/ScrollProgress';
 import ScrollToTop from './components/ScrollToTop';
-import FloatingPostButton from './components/FloatingPostButton';
-import ParticleField from './components/ParticleField';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
-import CreateConfession from './pages/CreateConfession';
-import AdminDashboard from './pages/AdminDashboard';
-import ConfessionDetail from './pages/ConfessionDetail';
-import Profile from './pages/Profile';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import TermsOfService from './pages/TermsOfService';
-import CommunityGuidelines from './pages/CommunityGuidelines';
-import ContentPolicy from './pages/ContentPolicy';
-import Disclaimer from './pages/Disclaimer';
-import Contact from './pages/Contact';
-import AnonChat from './pages/AnonChat';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import AuthModal from './components/AuthModal';
+import { HelmetProvider } from 'react-helmet-async';
+
+// Lazy-loaded pages for code splitting
+const CreateConfession = lazy(() => import('./pages/CreateConfession'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const ConfessionDetail = lazy(() => import('./pages/ConfessionDetail'));
+const Profile = lazy(() => import('./pages/Profile'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService'));
+const CommunityGuidelines = lazy(() => import('./pages/CommunityGuidelines'));
+const ContentPolicy = lazy(() => import('./pages/ContentPolicy'));
+const Disclaimer = lazy(() => import('./pages/Disclaimer'));
+const Contact = lazy(() => import('./pages/Contact'));
+const AnonChat = lazy(() => import('./pages/AnonChat'));
+
+const LazyFallback = () => (
+  <div className="min-h-screen flex items-center justify-center bg-[#0e1113]">
+    <Loader2 className="w-8 h-8 text-[#FF4500] animate-spin" />
+  </div>
+);
 
 const ProtectedRoute = ({ children, role }) => {
   const { user, loading } = useAuth();
@@ -46,25 +53,13 @@ const AppContent = () => {
   const location = useLocation();
 
   return (
-    <div className="relative min-h-screen animated-gradient-bg flex flex-col">
+    <div className="relative min-h-screen bg-[#0e1113] flex flex-col">
       <ScrollToTop />
-      <ScrollProgress />
       <Navbar />
       <AuthModal />
-      <FloatingPostButton />
-      
-      {/* Neural Particle Field */}
-      <ParticleField />
 
-      {/* Animated Background Orbs */}
-      <div className="fixed inset-0 pointer-events-none z-[1] overflow-hidden">
-        <div className="absolute top-[-15%] left-[-10%] w-[50vw] h-[50vw] bg-accent-cyan/5 blur-[150px] rounded-full animate-[floating_8s_ease-in-out_infinite]" />
-        <div className="absolute bottom-[-15%] right-[-10%] w-[50vw] h-[50vw] bg-accent-violet/5 blur-[150px] rounded-full animate-[floating_10s_ease-in-out_infinite_1s]" />
-        <div className="absolute top-[40%] left-[50%] w-[30vw] h-[30vw] bg-accent-cyan/3 blur-[120px] rounded-full animate-[floating_12s_ease-in-out_infinite_2s]" />
-      </div>
-
-      <main className="relative z-10 flex-1">
-        <AnimatePresence mode="wait">
+      <main className="relative flex-1">
+        <Suspense fallback={<LazyFallback />}>
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Landing />} />
             <Route path="/home" element={<Home />} />
@@ -93,15 +88,13 @@ const AppContent = () => {
             <Route path="/disclaimer" element={<Disclaimer />} />
             <Route path="/contact" element={<Contact />} />
           </Routes>
-        </AnimatePresence>
+        </Suspense>
       </main>
 
       <Footer />
     </div>
   );
 };
-
-import { HelmetProvider } from 'react-helmet-async';
 
 const App = () => {
   return (

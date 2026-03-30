@@ -6,9 +6,12 @@ import Button from '../components/Button';
 import { Mail, User, MessageSquare, Send, AlertTriangle, CheckCircle } from 'lucide-react';
 import toast from '../components/Toast';
 
+import { submitContactForm } from '../services/api';
+
 const Contact = () => {
   const [form, setForm] = useState({ name: '', email: '', reportType: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const reportTypes = [
     'Report harassment',
@@ -19,14 +22,22 @@ const Contact = () => {
     'Other inquiry'
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.reportType || !form.message) {
       return toast.error('Please fill in all fields');
     }
-    // In production, send to backend API
-    toast.success('Your message has been submitted. We will respond within 48 hours.');
-    setSubmitted(true);
+    
+    setLoading(true);
+    try {
+      await submitContactForm(form);
+      toast.success('Your message has been submitted. We will respond within 48 hours.');
+      setSubmitted(true);
+    } catch (err) {
+      toast.error('Failed to submit message. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (submitted) {
@@ -139,8 +150,8 @@ const Contact = () => {
             </div>
           </GlassCard>
 
-          <Button className="w-full py-4 text-lg" icon={Send}>
-            Submit Report
+          <Button className="w-full py-4 text-lg" icon={Send} disabled={loading}>
+            {loading ? 'Submitting...' : 'Submit Report'}
           </Button>
         </form>
       </div>
